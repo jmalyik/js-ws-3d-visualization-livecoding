@@ -30,7 +30,7 @@ class DataVisualizer {
         // add it to the html
         document.body.appendChild(this.renderer.domElement);
 
-        const materials = [new THREE.MeshPhongMaterial()];
+        const materials = DataVisualizer.createMaterialPalette(10);
 
         const mergedGeometry = new THREE.Geometry();
 
@@ -52,6 +52,17 @@ class DataVisualizer {
 
         this.animate();
         console.log('DataVisualizer inited');
+    }
+
+    static createMaterialPalette(count){
+        const  materials = [];
+        for(let i = 0; i < count; i++ ){
+            const material = new THREE.MeshPhongMaterial();
+            const colorComponent = Math.round(i / count  * 255);
+            material.color = new THREE.Color(`rgb(255, ${colorComponent}, 0)`);
+            materials.push(material);
+        }
+        return materials;
     }
 
     setupLights(){
