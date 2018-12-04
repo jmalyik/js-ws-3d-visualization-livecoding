@@ -36,9 +36,13 @@ class DataVisualizer {
             }
         }
 
+        function f(x) {
+            return Math.max(0, Math.min(1, Math.exp(x * 2) / 2.2 - 1));
+        }
+
         // array of rows of values
         const imageData = await getImageData(this.dataMapURL, 0.1);
-        const data = imageData.map(row => row.map(([r,g,b,a]) => threshold(1 - r / 255, 0.25)));
+        const data = imageData.map(row => row.map(([r,g,b,a]) => threshold(f(1 - r / 255)), 0.25));
         const dataWidth  = data.length;
         const dataHeight =  data[0] ? data[0].length : 0;
 
@@ -87,6 +91,8 @@ class DataVisualizer {
             const material = new THREE.MeshPhongMaterial();
             const colorComponent = Math.round(i / count  * 255);
             material.color = new THREE.Color(`rgb(255, ${colorComponent}, 0)`);
+            material.transparent = true;
+            material.opacity = 0.5;
             materials.push(material);
         }
         return materials;
