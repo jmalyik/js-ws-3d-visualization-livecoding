@@ -30,12 +30,23 @@ class DataVisualizer {
         // add it to the html
         document.body.appendChild(this.renderer.domElement);
 
+        const materials = [new THREE.MeshPhongMaterial()];
 
-        const cubeGeometry = new THREE.CubeGeometry(10, 10, 10);
-        const material = new THREE.MeshPhongMaterial();
-        const cube = new THREE.Mesh(cubeGeometry, material);
+        const mergedGeometry = new THREE.Geometry();
 
-        this.scene.add(cube);
+        for(let j = 0; j < 10; j++) {
+            const cubeGeometry = new THREE.CubeGeometry(1, 1, 1);
+            const cube = new THREE.Mesh(cubeGeometry);
+            cube.applyMatrix(new THREE.Matrix4().makeTranslation(j * 5, 0, 0));
+            for(let k = 0; k < cubeGeometry.faces.length; k++){
+                cubeGeometry.faces[k].materialIndex = 0;
+            }
+            mergedGeometry.merge(cubeGeometry, cube.matrix);
+        }
+
+        const mergedMesh = new THREE.Mesh(mergedGeometry, materials);
+
+        this.scene.add(mergedMesh);
 
         this.control = new THREE.OrbitControls(this.camera, this.renderer.domElement);
 
