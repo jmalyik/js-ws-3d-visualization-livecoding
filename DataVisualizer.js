@@ -28,9 +28,17 @@ class DataVisualizer {
         // set up lights
         this.setupLights();
 
+        function threshold(value, thresholdValue){
+            if(value < thresholdValue) {
+                return undefined;
+            }else{
+                return value;
+            }
+        }
+
         // array of rows of values
         const imageData = await getImageData(this.dataMapURL, 0.1);
-        const data = imageData.map(row => row.map(([r,g,b,a]) => 1 - r / 255));
+        const data = imageData.map(row => row.map(([r,g,b,a]) => threshold(1 - r / 255, 0.25)));
         const dataWidth  = data.length;
         const dataHeight =  data[0] ? data[0].length : 0;
 
@@ -45,7 +53,8 @@ class DataVisualizer {
             const row = data[j];
             for(let i = 0; i < row.length; i++) {    
                 const value = row[i];
-
+                if(value === undefined)
+                    continue;
                 const cubeGeometry = new THREE.CubeGeometry(1, 1, 1);
                 const cube = new THREE.Mesh(cubeGeometry);
                 cube.applyMatrix(new THREE.Matrix4().makeTranslation(i - dataWidth / 2, 0.5, j - dataHeight / 2));
