@@ -67,7 +67,12 @@ class DataVisualizer {
         }
 
         const mergedMesh = new THREE.Mesh(mergedGeometry, materials);
-
+        const map = createMap({
+            width: this.width,
+            height: this.height,
+            url: this.baseMapURL
+        });
+        this.scene.add(map);
         this.scene.add(mergedMesh);
 
         this.control = new THREE.OrbitControls(this.camera, this.renderer.domElement);
