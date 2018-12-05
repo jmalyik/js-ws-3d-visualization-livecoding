@@ -29,11 +29,7 @@ class DataVisualizer {
         this.setupLights();
 
         function threshold(value, thresholdValue){
-            if(value < thresholdValue) {
-                return undefined;
-            }else{
-                return value;
-            }
+            return value > thresholdValue;
         }
 
         function f(x) {
@@ -42,7 +38,7 @@ class DataVisualizer {
 
         // array of rows of values
         const imageData = await getImageData(this.dataMapURL, 0.1);
-        const data = imageData.map(row => row.map(([r,g,b,a]) => threshold(f(1 - r / 255)), 0.25));
+        const data = imageData.map(row => row.map(([r,g,b,a]) => 1 - r / 255));
         const dataWidth  = data.length;
         const dataHeight =  data[0] ? data[0].length : 0;
 
@@ -55,18 +51,18 @@ class DataVisualizer {
 
         for(let j = 0; j < data.length; j++) {
             const row = data[j];
-            for(let i = 0; i < row.length; i++) {    
+            for(let i = 0; i < row.length; i++) {  
                 const value = row[i];
-                if(value === undefined)
-                    continue;
-                const cubeGeometry = new THREE.CubeGeometry(1, 1, 1);
-                const cube = new THREE.Mesh(cubeGeometry);
-                cube.applyMatrix(new THREE.Matrix4().makeTranslation(i - dataWidth / 2, 0.5, j - dataHeight / 2));
-                cube.applyMatrix(new THREE.Matrix4().makeScale(1, 10 * value, 1));
-                for(let k = 0; k < cubeGeometry.faces.length; k++){
-                    cubeGeometry.faces[k].materialIndex = Math.round((1 - value) * (materials.length - 1));
+                if(threshold(value, 0.25)){
+                    const cubeGeometry = new THREE.CubeGeometry(1/2, 1/2, 1/2);
+                    const cube = new THREE.Mesh(cubeGeometry);  
+                    cube.applyMatrix(new THREE.Matrix4().makeTranslation(i - dataWidth / 2, 0.5, j - dataHeight / 2));
+                    cube.applyMatrix(new THREE.Matrix4().makeScale(1, 10 * value, 1));
+                    for(let k = 0; k < cubeGeometry.faces.length; k++){
+                        cubeGeometry.faces[k].materialIndex = Math.round((1 - value) * (materials.length - 1));
+                    }
+                    mergedGeometry.merge(cubeGeometry, cube.matrix); 
                 }
-                mergedGeometry.merge(cubeGeometry, cube.matrix);
             }
         }
 
@@ -92,7 +88,7 @@ class DataVisualizer {
             const colorComponent = Math.round(i / count  * 255);
             material.color = new THREE.Color(`rgb(255, ${colorComponent}, 0)`);
             material.transparent = true;
-            material.opacity = 0.5;
+           // material.opacity = 0.8;
             materials.push(material);
         }
         return materials;
