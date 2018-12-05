@@ -36,3 +36,7 @@ browser-sync start --server --files *
 
 Base map of Budapest: https://i.imgur.com/E8vbaRC.png
 Noise map of Budapest: https://i.imgur.com/MtBe8P6.png
+
+The final result is something similar on a 3D canvas: 
+
+![a screenshot](https://github.com/jmalyik/js-ws-3d-visualization-livecoding/blob/master/screenshot.png)
